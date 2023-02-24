@@ -71,6 +71,10 @@ public class StreamLabService {
 
     public List<User> RProblemFour()
     {
+        // Write a query that gets all the users who registered BEFORE 2016
+        // Return the list
+        // Research 'java create specific date' and 'java compare dates'
+        // You may need to use the helper classes imported above!
     	Calendar myDate = new GregorianCalendar(2016, Calendar.JANUARY, 1);
         Date my_obj = myDate.getTime();
         return users.findAll().stream().filter(user -> user.getRegistrationDate().before(my_obj)).toList();
@@ -102,17 +106,21 @@ public class StreamLabService {
     {
         // Write a query that retrieves all of the products in the shopping cart of the user who has the email "afton@gmail.com".
         // Return the list
-
-    	return null;
+        User user_products = users.findAll().stream().filter(user -> user.getEmail().equals("afton@gmail.com")).findFirst().orElse(null);
+        List<Product> products = user_products.getShoppingcartItems().stream().map(p -> p.getProduct()).toList();
+    	return products;
+        //changed filter to map because product cannot be converted to boolean.
     }
 
     public long RProblemSeven()
     {
         // Write a query that retrieves all of the products in the shopping cart of the user who has the email "oda@gmail.com" and returns the sum of all of the products prices.
     	// Remember to break the problem down and take it one step at a time!
-
-
-    	return 0;
+        User user_sum = users.findAll().stream().filter(user -> user.getEmail().equals("oda@gmail.com")).findFirst().orElse(null);
+        List<Product> products = user_sum.getShoppingcartItems().stream().map(p -> p.getProduct()).toList();
+        long sum = products.stream().mapToLong(p -> p.getPrice()).sum();
+        //Total price is 713, tested this function with problem 6 by changing problems 6 email and using this email to verify total sum.
+    	return sum;
 
     }
 
@@ -121,7 +129,10 @@ public class StreamLabService {
         // Write a query that retrieves all of the products in the shopping cart of users who have the role of "Employee".
     	// Return the list
 
-    	return null;
+        Role employee_role = roles.findAll().stream().filter(role -> role.getName().equals("Employee")).findFirst().orElse(null);
+        List<Product> products = shoppingcartitems.findAll().stream().filter(shoppingcartItem -> shoppingcartItem.getUser().getRoles().contains(employee_role)).map(shoppingcartItem -> shoppingcartItem.getProduct()).toList();
+
+    	return products;
     }
 
     // <><><><><><><><> CUD (Create, Update, Delete) Actions <><><><><><><><><>
@@ -132,8 +143,8 @@ public class StreamLabService {
     {
         // Create a new User object and add that user to the Users table.
         User newUser = new User();        
-        newUser.setEmail("david@gmail.com");
-        newUser.setPassword("DavidsPass123");
+        newUser.setEmail("joe@fake.com");
+        newUser.setPassword("password");
         users.save(newUser);
         return newUser;
     }
@@ -142,10 +153,13 @@ public class StreamLabService {
     {
         // Create a new Product object and add that product to the Products table.
         // Return the product
-    	
-
-    	return null;
-
+    	Product newProduct = new Product();
+        newProduct.setDescription("Testing testing");
+        newProduct.setName("Watch test");
+        newProduct.setPrice(59);
+        products.save(newProduct);
+        return newProduct;
+        
     }
 
     public List<Role> CDemoTwo()
